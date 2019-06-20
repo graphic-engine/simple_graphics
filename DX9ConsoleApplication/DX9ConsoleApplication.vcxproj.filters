@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{201a2ee0-c326-49bb-afbe-38e8b838b8ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simple_graphics">
+      <UniqueIdentifier>{e41291ed-5286-4455-a343-58e6bf05613d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simple_graphics\windows">
+      <UniqueIdentifier>{7e055af8-73c0-4b8d-99e7-bbdbc6fc1b91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simple_graphics\windows\direct3d">
+      <UniqueIdentifier>{4798f922-abc2-4e5e-ac72-2a0f4c367707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simple_graphics\windows\direct3d\v9">
+      <UniqueIdentifier>{5a057561-29a7-4de9-9e13-66f7cd5b01dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simple_graphics\windows\direct3d\v9\example">
+      <UniqueIdentifier>{7735655c-71de-471f-8646-f12b940a43d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simple_graphics\windows\direct3d\v9\test">
+      <UniqueIdentifier>{fb74554e-8ce0-48df-8349-198c19d7bcbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simple_graphics\windows\direct3d\v9\engine_slim">
+      <UniqueIdentifier>{52c167a2-d56f-4fe6-8636-80126ae40efb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simple_graphics\windows\direct3d\v9\engine_util">
+      <UniqueIdentifier>{7e6250ed-6703-4359-90b6-3303b9b485ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simple_graphics\windows\direct3d\v9\engine_util\converter">
+      <UniqueIdentifier>{1feef37c-2606-45f2-b3c7-06ac25731660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component">
+      <UniqueIdentifier>{6cdfaa77-db0c-4a2c-8cc5-87b7253d20e9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\simple_graphics\windows\direct3d\v9\test\test.cpp">
+      <Filter>src\simple_graphics\windows\direct3d\v9\test</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_slim\Window.hpp">
+      <Filter>src\simple_graphics\windows\direct3d\v9\engine_slim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_util\Vector.hpp">
+      <Filter>src\simple_graphics\windows\direct3d\v9\engine_util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_util\converter\TextConverter.hpp">
+      <Filter>src\simple_graphics\windows\direct3d\v9\engine_util\converter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component\DisplayObject.hpp">
+      <Filter>src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component\LineList.hpp">
+      <Filter>src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component\visual_component.h">
+      <Filter>src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component\Text.hpp">
+      <Filter>src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
