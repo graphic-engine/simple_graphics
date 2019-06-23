@@ -1,6 +1,4 @@
 ﻿#pragma once
-
-
 #include "../Window.hpp"
 #include "DisplayObject.hpp"
 
@@ -43,7 +41,10 @@ namespace simple_graphics
 								Box(const Vector &size) :size(size) {}
 
 								//getter methods
-								const Vector getSize() const;
+								const Vector getSize() const
+								{
+									return size;
+								}
 							};
 
 							//以下是Text类的成员部分;
@@ -62,6 +63,9 @@ namespace simple_graphics
 								//DWORD format = D3DFVF_XYZ | D3DFVF_NORMAL对应的顶点格式
 								//之所以知道从Text中获取的是这样的顶点格式，
 								//就是调试输出了18也就是0x12，所以就是D3DFVF_XYZ | D3DFVF_NORMAL
+								//另外，查阅 https://docs.microsoft.com/zh-cn/windows/desktop/direct3d9/d3dxcreatetext
+								//可以知道该函数产生的Mesh是这样的灵活顶点格式
+								
 							};
 						public:
 							inline void render(
@@ -114,47 +118,42 @@ namespace simple_graphics
 
 								delete[] tempContent;
 
-								//todo
-								///////////////////////////////////////////////
-								/*
-								//2. 变形到原点并适配文本盒
-								struct Text::Vertex *currentVertexPointer = NULL;
+								struct { Vector min, max; } meshBound;
+								struct Vertex *currentVertexPointer = NULL;
 								//为什么要这样强制转换
 								this->d3dxMesh->LockVertexBuffer(0, reinterpret_cast<void **>(&currentVertexPointer));
-								struct { Vector min, max; } bound;
-								bound.min = Vector(
+								meshBound.min = Vector(
+									currentVertexPointer[0].x,
+									currentVertexPointer[0].y, 
+									currentVertexPointer[0].z
+								);
+								meshBound.max = Vector(
 									currentVertexPointer[0].x,
 									currentVertexPointer[0].y,
 									currentVertexPointer[0].z
 								);
-								bound.max = Vector(
-									currentVertexPointer[0].x,
-									currentVertexPointer[0].y,
-									currentVertexPointer[0].z
-								);
-								//遍历所有的顶点找到边界，以移动到中心
+								//遍历Mesh中所有的顶点
 								for (DWORD i = 0; i < this->d3dxMesh->GetNumVertices(); ++i)
 								{
 									//更新上界
-									if (currentVertexPointer[i].x > bound.max.getX())
-										bound.max.setX(currentVertexPointer[i].x);
-									if (currentVertexPointer[i].y > bound.max.getY())
-										bound.max.setY(currentVertexPointer[i].y);
-									if (currentVertexPointer[i].z > bound.max.getZ())
-										bound.max.setZ(currentVertexPointer[i].z);
+									if (currentVertexPointer[i].x > meshBound.max.getX())
+										meshBound.max.setX(currentVertexPointer[i].x);
+									if (currentVertexPointer[i].y > meshBound.max.getY())
+										meshBound.max.setY(currentVertexPointer[i].y);
+									if (currentVertexPointer[i].z > meshBound.max.getZ())
+										meshBound.max.setZ(currentVertexPointer[i].z);
 									//更新下界
-									if (currentVertexPointer[i].x < bound.min.getX())
-										bound.min.setX(currentVertexPointer[i].x);
-									if (currentVertexPointer[i].y < bound.min.getY())
-										bound.min.setY(currentVertexPointer[i].y);
-									if (currentVertexPointer[i].z < bound.min.getZ())
-										bound.min.setZ(currentVertexPointer[i].z);
+									if (currentVertexPointer[i].x < meshBound.min.getX())
+										meshBound.min.setX(currentVertexPointer[i].x);
+									if (currentVertexPointer[i].y < meshBound.min.getY())
+										meshBound.min.setY(currentVertexPointer[i].y);
+									if (currentVertexPointer[i].z < meshBound.min.getZ())
+										meshBound.min.setZ(currentVertexPointer[i].z);
 								}
-								//
 								Vector center(
-									(bound.min.getX() + bound.max.getX()) / 2,
-									(bound.min.getY() + bound.max.getY()) / 2,
-									(bound.min.getZ() + bound.max.getZ()) / 2
+									(meshBound.min.getX() + meshBound.max.getX()) / 2,
+									(meshBound.min.getY() + meshBound.max.getY()) / 2,
+									(meshBound.min.getZ() + meshBound.max.getZ()) / 2
 								);
 								//首先移动到中心
 								for (DWORD i = 0; i < this->d3dxMesh->GetNumVertices(); ++i)
@@ -164,32 +163,75 @@ namespace simple_graphics
 									currentVertexPointer[i].z -= static_cast<float>(center.getZ());
 								}
 								center.set(0, 0, 0);//已经平移到了中心就要将中心设为0了
-													//然后再缩放文字到box的大小
-								double scaleTemp[3];
-								scaleTemp[0] = this->textBox.getSize().getX() / (bound.max.getX() - bound.min.getX());
-								scaleTemp[1] = this->textBox.getSize().getY() / (bound.max.getY() - bound.min.getY());
-								scaleTemp[2] = this->textBox.getSize().getZ() / (bound.max.getZ() - bound.min.getZ());
-								//选择最小的一个作为缩放倍数
-								double scale = scaleTemp[0];
-								if (scaleTemp[1] < scale) scale = scaleTemp[1];
-								if (scaleTemp[2] < scale) scale = scaleTemp[2];
-								//进行缩放
-								//因为是各个方向同倍数进行缩放，所以应该不用改变法向量
 
-								//啊啊啊啊啊啊啊啊啊啊啊我真的好想谈恋爱啊
-								// 为什么没有妹子喜欢我
+								Vector currentMeshSize(
+									meshBound.max.getX() - meshBound.min.getX(),
+									meshBound.max.getY() - meshBound.min.getY(),
+									meshBound.max.getZ() - meshBound.min.getZ()
+								);
+								Vector allowedMeshSize = this->textBox.getSize() * absoluteScale;
+								
+								//不管是要放大还是缩小，都要选择
+								//allowedMeshSize/currentMeshSiz向量三个分量中最小的一个进行等比例缩放，
+								//才能保证缩放后的尺寸不会有任何一个分量超出allowedMeshSize
+								double scaleRatio = allowedMeshSize.getX() / currentMeshSize.getX();
+								if (allowedMeshSize.getY() / currentMeshSize.getY() < scaleRatio)
+									scaleRatio = allowedMeshSize.getY() / currentMeshSize.getY();
+								if (allowedMeshSize.getZ() / currentMeshSize.getZ() < scaleRatio)
+									scaleRatio = allowedMeshSize.getZ() / currentMeshSize.getZ();
+
+								//遍历所有顶点，进行缩放的处理
+								//法向量在缩放的操作中不需要改变，但是在接下来旋转的操作中要改变
+								//先旋转，再平移到要求的位置
 								for (DWORD i = 0; i < this->d3dxMesh->GetNumVertices(); ++i)
 								{
-									currentVertexPointer[i].x *= static_cast<float>(scale);
-									currentVertexPointer[i].y *= static_cast<float>(scale);
-									currentVertexPointer[i].z *= static_cast<float>(scale);
+									currentVertexPointer[i].x *= static_cast<float>(scaleRatio);
+									currentVertexPointer[i].y *= static_cast<float>(scaleRatio);
+									currentVertexPointer[i].z *= static_cast<float>(scaleRatio);
 								}
-								//完成缩放了，这样也就可以锁定准备给render方法进行渲染了
-								//所以这个函数执行一次就要把所有的顶点遍历三次，这是不可取的
+								//这次遍历中进行的是旋转的操作
+								for (DWORD i = 0; i < this->d3dxMesh->GetNumVertices(); ++i)
+								{
+									Vector currentVertexPosition(
+										currentVertexPointer[i].x,
+										currentVertexPointer[i].y,
+										currentVertexPointer[i].z
+									);
+									Vector currentVertexNormalVector(
+										currentVertexPointer[i].nx,
+										currentVertexPointer[i].ny,
+										currentVertexPointer[i].nz
+									);
+									//进行旋转
+									currentVertexPosition.rotate(absoluteRotation);
+									currentVertexNormalVector.rotate(absoluteRotation);
+
+									//将旋转后的结果写回顶点缓存
+									currentVertexPointer[i].x = 
+										static_cast<float>(currentVertexPosition.getX());
+									currentVertexPointer[i].y = 
+										static_cast<float>(currentVertexPosition.getY());
+									currentVertexPointer[i].z = 
+										static_cast<float>(currentVertexPosition.getZ());
+									currentVertexPointer[i].nx = 
+										static_cast<float>(currentVertexNormalVector.getX());
+									currentVertexPointer[i].ny =
+										static_cast<float>(currentVertexNormalVector.getY());
+									currentVertexPointer[i].nz =
+										static_cast<float>(currentVertexNormalVector.getZ());
+								}
+								//这次遍历中进行的是平移的操作
+								for (DWORD i = 0; i < this->d3dxMesh->GetNumVertices(); ++i)
+								{
+									currentVertexPointer[i].x += 
+										static_cast<float>(absolutePosition.getX());
+									currentVertexPointer[i].y += 
+										static_cast<float>(absolutePosition.getY());
+									currentVertexPointer[i].z += 
+										static_cast<float>(absolutePosition.getZ());
+								}
 								this->d3dxMesh->UnlockVertexBuffer();
-								*/
-								///////////////////////////////////////////////
-								//todo
+								
 								this->d3dxMesh->DrawSubset(0);
 							}
 
@@ -209,119 +251,6 @@ namespace simple_graphics
 							~Text()
 							{
 								if (this->d3dxMesh != NULL) d3dxMesh->Release();
-							}
-						private:
-							inline void initializeMesh()
-							{
-								//0. 如果不是NULL那就说明曾经被初始化过，要释放
-								if (this->d3dxMesh != NULL) d3dxMesh->Release();
-								//1. 首先创建文本Mesh
-								using simple_graphics::windows::direct3d::v9::engine_util::converter::TextConverter;
-
-								LPWSTR font;
-								TextConverter::stringToWideChar(this->fontName, font);
-
-								//我讨厌这些原始的句柄
-								struct {
-									HFONT original, current;
-								} hFonts;
-
-								//这两个10是什么意思来着，不记得了
-								hFonts.current = CreateFont(
-									10, 10, 0, 0,
-									this->weight, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0, static_cast<LPCWSTR>(font));
-								delete[] font;//这个是临时变量，用完要删除
-
-								LPWSTR tempContent;
-								TextConverter::stringToWideChar(this->content, tempContent);
-
-
-								//创建字体
-								HDC hdc = CreateCompatibleDC(0);//创建环境
-																//hFonts.original = (HFONT)SelectObject(hdc, hFonts.current);
-								hFonts.original = static_cast<HFONT>(SelectObject(hdc, hFonts.current));//C++形式转换
-																										//将字体选入设备环境,返回上一个字体，以备重新选择
-								D3DXCreateText(this->window.getDevice(), hdc, static_cast<LPCWSTR>(tempContent),
-									0.001f,//0.001这是最小值了  再小就出Bug了，这都是血的经验试出来的
-									(0.001f*0.001f*0.001f*0.001f*0.001f*0.001f*0.001f*0.001f),
-									&this->d3dxMesh, NULL, NULL);//创建文本网格
-								SelectObject(hdc, hFonts.original);//选择原来的字体
-								DeleteObject(hFonts.current);//删除新创建的字体
-															 //上面这两条命令是不是可以合并为同一个
-								DeleteDC(hdc);
-
-								delete[] tempContent;
-
-								//2. 变形到原点并适配文本盒
-								struct Text::Vertex *currentVertexPointer = NULL;
-								//为什么要这样强制转换
-								this->d3dxMesh->LockVertexBuffer(0, reinterpret_cast<void **>(&currentVertexPointer));
-								struct { Vector min, max; } bound;
-								bound.min = Vector(
-									currentVertexPointer[0].x,
-									currentVertexPointer[0].y,
-									currentVertexPointer[0].z
-								);
-								bound.max = Vector(
-									currentVertexPointer[0].x,
-									currentVertexPointer[0].y,
-									currentVertexPointer[0].z
-								);
-								//遍历所有的顶点找到边界，以移动到中心
-								for (DWORD i = 0; i < this->d3dxMesh->GetNumVertices(); ++i)
-								{
-									//更新上界
-									if (currentVertexPointer[i].x > bound.max.getX())
-										bound.max.setX(currentVertexPointer[i].x);
-									if (currentVertexPointer[i].y > bound.max.getY())
-										bound.max.setY(currentVertexPointer[i].y);
-									if (currentVertexPointer[i].z > bound.max.getZ())
-										bound.max.setZ(currentVertexPointer[i].z);
-									//更新下界
-									if (currentVertexPointer[i].x < bound.min.getX())
-										bound.min.setX(currentVertexPointer[i].x);
-									if (currentVertexPointer[i].y < bound.min.getY())
-										bound.min.setY(currentVertexPointer[i].y);
-									if (currentVertexPointer[i].z < bound.min.getZ())
-										bound.min.setZ(currentVertexPointer[i].z);
-								}
-								//
-								Vector center(
-									(bound.min.getX() + bound.max.getX()) / 2,
-									(bound.min.getY() + bound.max.getY()) / 2,
-									(bound.min.getZ() + bound.max.getZ()) / 2
-								);
-								//首先移动到中心
-								for (DWORD i = 0; i < this->d3dxMesh->GetNumVertices(); ++i)
-								{
-									currentVertexPointer[i].x -= static_cast<float>(center.getX());
-									currentVertexPointer[i].y -= static_cast<float>(center.getY());
-									currentVertexPointer[i].z -= static_cast<float>(center.getZ());
-								}
-								center.set(0, 0, 0);//已经平移到了中心就要将中心设为0了
-													//然后再缩放文字到box的大小
-								double scaleTemp[3];
-								scaleTemp[0] = this->textBox.getSize().getX() / (bound.max.getX() - bound.min.getX());
-								scaleTemp[1] = this->textBox.getSize().getY() / (bound.max.getY() - bound.min.getY());
-								scaleTemp[2] = this->textBox.getSize().getZ() / (bound.max.getZ() - bound.min.getZ());
-								//选择最小的一个作为缩放倍数
-								double scale = scaleTemp[0];
-								if (scaleTemp[1] < scale) scale = scaleTemp[1];
-								if (scaleTemp[2] < scale) scale = scaleTemp[2];
-								//进行缩放
-								//因为是各个方向同倍数进行缩放，所以应该不用改变法向量
-
-								//啊啊啊啊啊啊啊啊啊啊啊我真的好想谈恋爱啊
-								// 为什么没有妹子喜欢我
-								for (DWORD i = 0; i < this->d3dxMesh->GetNumVertices(); ++i)
-								{
-									currentVertexPointer[i].x *= static_cast<float>(scale);
-									currentVertexPointer[i].y *= static_cast<float>(scale);
-									currentVertexPointer[i].z *= static_cast<float>(scale);
-								}
-								//完成缩放了，这样也就可以锁定准备给render方法进行渲染了
-								//所以这个函数执行一次就要把所有的顶点遍历三次，这是不可取的
-								this->d3dxMesh->UnlockVertexBuffer();
 							}
 						};
 					}

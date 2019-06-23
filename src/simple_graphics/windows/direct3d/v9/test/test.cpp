@@ -181,11 +181,11 @@ int main()
 		testVertexPairVector.clear();
 		testVertexPairVector.clear();
 
-		//Text testText = Text(window, Text::Box(Vector(1, 1, 0.001*0.001)), "Szx");
-		testComposite.add(std::make_shared<Text>(
-			window, Text::Box(Vector(1, 1, 0.001*0.001)), "Szx")
+		Text testText = Text(
+			window, Text::Box(Vector(200, 100, 10)),
+			"Tsinghua University"
 		);
-
+		testText.render(Vector(0, 0,100));
 
 		testComposite.render(
 			Vector(),
@@ -200,6 +200,6 @@ int main()
 		*/
 	};
 
-	window.setStaticCamera(Vector(0, 0, -1), Vector(0, 0, 0));
+	window.setStaticCamera(Vector(0, 0, 0), Vector(0, 0, 1));
 	window.render(displayTest);
 }
