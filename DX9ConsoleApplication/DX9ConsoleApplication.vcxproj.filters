@@ -46,6 +46,12 @@
     <Filter Include="src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component">
       <UniqueIdentifier>{6cdfaa77-db0c-4a2c-8cc5-87b7253d20e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\simple_graphics\windows\direct3d\v9\engine_slim\light">
+      <UniqueIdentifier>{08b09b79-d058-4ca0-9fa3-b20c6469e65d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\simple_graphics\windows\direct3d\v9\device_util">
+      <UniqueIdentifier>{97206a17-5124-47ee-a0b4-d0abf64f62be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\simple_graphics\windows\direct3d\v9\test\test.cpp">
@@ -73,6 +79,18 @@
     </ClInclude>
     <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component\Text.hpp">
       <Filter>src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_slim\light\light.h">
+      <Filter>src\simple_graphics\windows\direct3d\v9\engine_slim\light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_slim\light\light_examples.h">
+      <Filter>src\simple_graphics\windows\direct3d\v9\engine_slim\light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\device_util\DeviceRenderStateView.hpp">
+      <Filter>src\simple_graphics\windows\direct3d\v9\device_util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\device_util\device_util.h">
+      <Filter>src\simple_graphics\windows\direct3d\v9\device_util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

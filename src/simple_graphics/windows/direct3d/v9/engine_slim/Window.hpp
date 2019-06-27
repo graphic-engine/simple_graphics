@@ -59,7 +59,7 @@ namespace simple_graphics
 						};
 
 						//拷贝构造函数
-						Window(const Window &window)
+						inline Window(const Window &window)
 						{
 							this->hInstance = window.getHInstance();
 							this->hwnd = window.getHWND();
@@ -68,7 +68,7 @@ namespace simple_graphics
 						}
 
 						//移动构造函数
-						Window(Window &&window)
+						inline Window(Window &&window)
 						{
 							this->hInstance = window.getHInstance();
 							this->hwnd = window.getHWND();
@@ -150,7 +150,7 @@ namespace simple_graphics
 						}
 
 						//设置静态相机
-						inline void setStaticCamera(
+						inline Window &setStaticCamera(
 							const Vector &position = Vector(0, 0, 0),
 							const Vector &target = Vector(0, 0, 1),
 							const double &angle = 0.5f*D3DX_PI,
@@ -182,6 +182,8 @@ namespace simple_graphics
 								static_cast<float>(zMin), static_cast<float>(zMax)
 							);
 							this->device->SetTransform(D3DTS_PROJECTION, &transformMatrix);
+
+							return *this;
 						}
 
 						//这个构造函数最复杂，最初是直接抄书上的例程

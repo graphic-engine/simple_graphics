@@ -46,6 +46,10 @@
     <ClCompile Include="..\src\simple_graphics\windows\direct3d\v9\test\test.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\device_util\DeviceRenderStateView.hpp" />
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\device_util\device_util.h" />
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_slim\light\light.h" />
+    <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_slim\light\light_examples.h" />
     <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component\DisplayObject.hpp" />
     <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component\LineList.hpp" />
     <ClInclude Include="..\src\simple_graphics\windows\direct3d\v9\engine_slim\visual_component\Text.hpp" />
