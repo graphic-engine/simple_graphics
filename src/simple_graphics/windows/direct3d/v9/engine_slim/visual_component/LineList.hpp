@@ -1,5 +1,6 @@
 #pragma once
 #include "../Window.hpp"
+#include "../../device_util/device_util.h"
 #include "DisplayObject.hpp"
 
 namespace simple_graphics
@@ -140,10 +141,16 @@ namespace simple_graphics
 								}
 								this->vertexBuffer->Unlock();
 
-								//进行渲染
+								//在渲染灵活顶点格式为(D3DFVF_XYZ|D3DFVF_DIFFUSE)的图元时
+								//要关闭光源处理，以根据顶点中所定义的颜色进行渲染
+								//否则其颜色由外部环境光(Ambient)确定
+								using device_util::DeviceRenderStateView;
+								DeviceRenderStateView deviceRenderStateView(this->window.getDevice());
+								deviceRenderStateView.processLights(false);//关闭光源处理
 								this->window.getDevice()->SetStreamSource(0, this->vertexBuffer, 0, sizeof(Vertex));
 								this->window.getDevice()->SetFVF(Vertex::format);//设置灵活顶点格式
 								this->window.getDevice()->DrawPrimitive(D3DPT_LINELIST, 0, vertexToRender.size());
+								deviceRenderStateView.processLights(true);//恢复光源处理
 								//绘制图元
 							}
 

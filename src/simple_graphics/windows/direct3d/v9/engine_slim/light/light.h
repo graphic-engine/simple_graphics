@@ -17,6 +17,10 @@ namespace simple_graphics
 			{
 				namespace engine_slim
 				{
+					//https://docs.microsoft.com/zh-cn/windows/desktop/direct3d9/light-types
+					//https://docs.microsoft.com/zh-cn/windows/desktop/direct3d9/light-properties
+					//https://docs.microsoft.com/zh-cn/windows/desktop/direct3d9/attenuation-and-spotlight-factor
+					//https://docs.microsoft.com/zh-cn/windows/desktop/direct3d9/mathematics-of-lighting
 					namespace light
 					{
 						class LightConfigBuilder final
@@ -209,8 +213,8 @@ namespace simple_graphics
 							//仅用于指定聚光灯外部锥形的圆心角，单位为弧度
 							inline LightConfigBuilder &phi(const float &phi)
 							{
-								return *this;
 								this->d3dLight.Phi = phi;
+								return *this;
 							}
 						};
 

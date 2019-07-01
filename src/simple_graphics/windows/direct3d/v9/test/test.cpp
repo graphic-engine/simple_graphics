@@ -191,15 +191,7 @@ int main()
 			window, Text::Box(Vector(200, 100, 10)),
 			"Tsinghua University"
 		);
-		//文本网格的灵活顶点格式包含位置和法向量
-		//要开启光源处理，以根据外部光线及其材质确定颜色
-		renderStateView.processLights();
 		testText.render(Vector(0, 0, 100));
-
-		//在渲染灵活顶点格式为(D3DFVF_XYZ|D3DFVF_DIFFUSE)的图元时
-		//要关闭光源处理，以根据其自身定义的颜色渲染
-		//否则其颜色由外部环境光确定
-		renderStateView.setDefaultAmbient().processLights(false);
 		testComposite.render(
 			Vector(),
 			Vector(0, 0, -0.001*totalTime)
@@ -216,7 +208,7 @@ int main()
 	window.setStaticCamera(Vector(0, 0, 0), Vector(0, 0, 1));
 	using simple_graphics::windows::direct3d::v9::engine_slim::light::Light;
 	Light(window, 0).set(
-		simple_graphics::windows::direct3d::v9::engine_slim::light::light_example::getDirectionalLightExample(0)
+		simple_graphics::windows::direct3d::v9::engine_slim::light::light_example::getSpotLightExample(0)
 	).on();
 	using simple_graphics::windows::direct3d::v9::device_util::DeviceRenderStateView;
 	DeviceRenderStateView(window.getDevice()).setShadeMode(DeviceRenderStateView::ShadeMode_GOURAUD);

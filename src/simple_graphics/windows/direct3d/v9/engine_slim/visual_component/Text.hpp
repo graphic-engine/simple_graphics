@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "../Window.hpp"
+#include "../../device_util/device_util.h"
 #include "DisplayObject.hpp"
 
 #include "../../engine_util/converter/TextConverter.hpp"
@@ -231,7 +232,12 @@ namespace simple_graphics
 										static_cast<float>(absolutePosition.getZ());
 								}
 								this->d3dxMesh->UnlockVertexBuffer();
-								
+
+								//文本网格的灵活顶点格式包含位置和法向量
+								//在绘制前确保光源处理已打开，以根据光源及其材质确定颜色
+								device_util::DeviceRenderStateView(
+									this->window.getDevice()
+								).processLights(true);
 								this->d3dxMesh->DrawSubset(0);
 							}
 
